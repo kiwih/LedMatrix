@@ -4,4 +4,5 @@ Release/
 *.elf
 *.hex
 *.bin
-*.componentinfo
+*.componentinfo.xml
+.vs/
