@@ -2,7 +2,29 @@
 
 I found an LED matrix in the bin outside a business. So I took it home and got it going!
 
-## Wiring:
+I used an Atmega Xplained Mini (Atmega328PB) to control the module, and a 12V 2A DC PSU unit to provide power.
+
+## Investigation
+
+First port of call was to examine the PCB for the control scheme. I found an INPUT port, an OUTPUT port (presumably for daisy chaining) and 12V/GND port.
+The input port had a few labels, including OE, CLK, LAT, R1/R2/G1/G2/B1/B2, and 2*GND.
+The CLK hinted that this was a serial connection of some kind, and I could guess that OE stood for Output Enable. 
+Obviously also there was an R, G, and B component to the signal, but I wasn't sure how these fit in yet, or why there was two wires for each.
+I grabbed a bunch of the modules, and then headed home. On the way, I sent a message to a former colleague who has experience with digital signage what the typical control scheme was. 
+He said 99% of the time it was just simple shift register based electronics, no complex IIC or SPI or CAN protocols.
+
+When I got home, I looked up the main IC that was located across the board - the MBI5024. Looks like it's a shift register - my former colleague was right!
+The labels on the bottom were very helpful, except for LAT, which is equidistant between two pins. To make matters worse, due to coronavirus, I'm stuck at home with no proper gear.
+Nonetheless, I wrote a basic program to shift in a constant stream of 1's on G1, and tried the first possible LAT pin, and then the other - with the other, the top half of the module lit up in green!
+Tried on G2. The bottom half lit up!
+That explains the "1"/"2" on the colors, and the location of LAT.
+
+I then shifted in the signal slowly. Interestingly, it didn't fill a whole row as it came in - instead, it filled segments of the display. It seems that the LEDs are wired in a peculiar way - presumably to make
+the traces easier. I discussed this more under Pixel Addressing below.
+
+At any rate, I was ready to program a full controller! 
+
+## Wiring the full controller
 
 The LED matrix has got an INPUT port, an OUTPUT port, and a 12V/GND ports.
 Here's the pinout for the INPUT port.
