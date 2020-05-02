@@ -168,6 +168,9 @@ void Display_DrawLine(
 	}
 }
 
+//Midpoint circul drawing algorithm adapted from
+//https://www.geeksforgeeks.org/mid-point-circle-drawing-algorithm/
+//(I found that the provided code didn't deal with the initial 4 points correctly)
 void Display_DrawCircle(uint8_t xc, uint8_t yc, uint8_t r, pixel_color_t px)
 {
 	int16_t x = r, y = 0;
@@ -185,7 +188,6 @@ void Display_DrawCircle(uint8_t xc, uint8_t yc, uint8_t r, pixel_color_t px)
 		Display_DrawPixel(xc, yc + r, px);
 	}
 	
-	// Initialising the value of P
 	int16_t P = 1 - r;
 	while (x > y)
 	{
