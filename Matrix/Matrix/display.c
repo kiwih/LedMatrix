@@ -6,20 +6,22 @@
  */ 
 
 #include "display.h"
-
+#include "display_font.h"
 #include "defines.h"
 
 #include <avr/io.h>
 #include <util/delay.h>
+#include <stdbool.h>
 
+#define NUM_DISPLAYS_HORIZ 1
 #define DISPLAY_WIDTH 16
 #define DISPLAY_HEIGHT 16
 
 #define ABS(X)      ((X) > 0 ? (X) : -(X))
 #define MIN(X,Y)    ((X) < (Y) ? (X) : (Y))
 
-static volatile pixel_color_t scrbuf1[DISPLAY_WIDTH*DISPLAY_HEIGHT] = {0}; //we'll use 8 bits for each pixel at the moment, format R  R  R  G  G  G  B  B
-static volatile pixel_color_t scrbuf2[DISPLAY_WIDTH*DISPLAY_HEIGHT] = {0}; //we'll use 8 bits for each pixel at the moment, format R  R  R  G  G  G  B  B
+static volatile pixel_color_t scrbuf1[NUM_DISPLAYS_HORIZ*DISPLAY_WIDTH*DISPLAY_HEIGHT] = {0}; //we'll use 8 bits for each pixel at the moment, format R  R  R  G  G  G  B  B
+static volatile pixel_color_t scrbuf2[NUM_DISPLAYS_HORIZ*DISPLAY_WIDTH*DISPLAY_HEIGHT] = {0}; //we'll use 8 bits for each pixel at the moment, format R  R  R  G  G  G  B  B
 
 volatile pixel_color_t* frontbuf; //currently being rendered
 volatile pixel_color_t* backbuf; //currently being manipulated
@@ -59,12 +61,12 @@ void Display_TransmitBuffer() {
 	//We call each pixel as we do this as px1 and px2 going to rgb1 and rgb2.
 
 	//Whew! Overall, we get it all out with the following triple nested for loop:
-	for(uint8_t seg = 0; seg < 4; seg++) {			//for each segment of 4 columns
-		for(uint8_t row = 0; row < 8; row++) {		//for each 8 rows in the segment
+	for(uint8_t seg = 0; seg < 4*NUM_DISPLAYS_HORIZ; seg++) {			//for each segment of 4 columns
+		for(uint8_t row = 0; row < DISPLAY_HEIGHT/2; row++) {		//for each 8 rows in the segment
 			for(uint8_t col = 0; col < 4; col++) {	//for each column in the 4 columns
 
 				pixel_color_t px1 = frontbuf[seg * 4 + col + DISPLAY_WIDTH*row];		//convert (seg, col, row) to pixel address for the top 8 rows
-				pixel_color_t px2 = frontbuf[seg * 4 + col + DISPLAY_WIDTH*row + 128];	//now add 128 to that and you have the pixel in the bottom 8 rows as well
+				pixel_color_t px2 = frontbuf[seg * 4 + col + DISPLAY_WIDTH*row + NUM_DISPLAYS_HORIZ*DISPLAY_WIDTH*DISPLAY_HEIGHT/2];	//now add 128 to that and you have the pixel in the bottom 8 rows as well
 
 				uint8_t r1 = (px1 & 0b11100000) >> 5; //extract rgb for px1
 				uint8_t g1 = (px1 & 0b00011100) >> 2;
@@ -225,4 +227,69 @@ void Display_DrawCircle(uint8_t xc, uint8_t yc, uint8_t r, pixel_color_t px)
 			Display_DrawPixel(-y + xc, -x + yc, px);
 		}
 	}
+}
+
+//return 1 if not drawn, 0 otherwise
+uint8_t Display_DrawChar(uint8_t x, uint8_t y, uint8_t c, uint8_t scale, pixel_color_t px) { 
+	
+	if((c < ' ') || (c > '~')) //we only support characters between ASCII space and tilde
+		c = '?';
+	
+	
+	if(scale < 1 || scale > 2) { //we only support scales between 1 and 2 for now
+		scale = 1;
+	}
+	
+	for(int8_t i=0; i<(scale - 1); i++) { //make sure the x position starts on a grid compatible with the chosen scale
+		if(x % scale != 1) {
+			x++;
+		} else {
+			break;
+		}
+	}
+	
+	if(x + 5*scale > DISPLAY_WIDTH) { //ensure we aren't going to overflow the display in x
+		return 1;
+	}
+	if(y + 8*scale > DISPLAY_HEIGHT) { //ensure we aren't going to overflow the display in y
+		return 1;
+	}
+	
+	
+	uint16_t offs;
+	offs = (c - 32)*5;
+	
+	for(uint8_t c_col = 0; c_col < 5; c_col++ ) { //for each column of the character
+		uint8_t font_c; //the raw bits making up one column of the character
+		font_c = Font[offs + (c_col)];
+			
+		for(uint8_t c_row = 0; c_row < 8; c_row++) { //for each row of the character
+			if(font_c & (1 << (c_row))) { //if the pixel is lit
+				for(uint8_t s_fact_x = 0; s_fact_x < scale; s_fact_x++) {
+					for(uint8_t s_fact_y = 0; s_fact_y < scale; s_fact_y++) { //for each scale factor (this will stretch in the y dimension)
+						Display_DrawPixel(x+(c_col*scale)+s_fact_x, y+(c_row*scale)+s_fact_y, px);
+					}
+				}
+			}
+		}
+	}
+
+	return 0;
+}
+
+//return 1 if any error, 0 otherwise
+uint8_t Display_DrawString(uint8_t x, uint8_t y, uint8_t* str, uint8_t scale, pixel_color_t px) {
+	
+	if(scale < 1 || scale > 2) { //we only support scales between 1 and 2 for now
+		scale = 1;
+	}
+
+	uint16_t i = 0;
+	while(str[i] != '\0') {
+		if(Display_DrawChar(x+i*scale*5, y, str[i], scale, px)) {
+			return 1;
+		}
+		i++;
+	}
+	return 0;
 }

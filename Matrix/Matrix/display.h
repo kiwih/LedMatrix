@@ -27,4 +27,8 @@ void Display_DrawLine(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, pixel_colo
 
 void Display_DrawCircle(uint8_t xc, uint8_t yc, uint8_t r, pixel_color_t px);
 
+uint8_t Display_DrawChar(uint8_t x, uint8_t y, uint8_t c, uint8_t scale, pixel_color_t px);
+
+uint8_t Display_DrawString(uint8_t x, uint8_t y, uint8_t* str, uint8_t scale, pixel_color_t px);
+
 #endif /* DISPLAY_H_ */

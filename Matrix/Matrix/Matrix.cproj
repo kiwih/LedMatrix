@@ -168,6 +168,9 @@
     <Compile Include="display_colors.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="display_font.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="main.c">
       <SubType>compile</SubType>
     </Compile>

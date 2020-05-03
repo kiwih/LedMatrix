@@ -31,8 +31,17 @@ int main(void)
 	while(1)
     {
 		
-		/*//draw some rotating lines!
-		for(uint8_t color_count = 0; color_count < 7; color_count++) {
+		for(uint8_t c = ' '; c <= '~'; c++) {
+			Display_Fill(DISPLAY_BLACK);
+			Display_DrawChar(0, 8, c, 1, DISPLAY_WHITE);
+			Display_DrawString(0, 0, "hi", 1, DISPLAY_WHITE);
+			Display_SwapBuffers();
+			_delay_ms(500);
+		}
+
+		//draw some rotating lines!
+		
+		/*for(uint8_t color_count = 0; color_count < 7; color_count++) {
 			switch(color_count) {
 			case 0:
 				current_color = DISPLAY_RED;
@@ -87,12 +96,12 @@ int main(void)
 		Display_DrawPixel(8,13,DISPLAY_YELLOW);
 		Display_DrawPixel(9,13,DISPLAY_YELLOW);
 		Display_SwapBuffers();
-		_delay_ms(1000);*/
+		_delay_ms(1000);//*/
 		
 		
 		//Disabled below because it's hecking bright
 	
-
+		/*
 		
 		Display_Fill(DISPLAY_RED);
 		Display_SwapBuffers();
@@ -117,7 +126,7 @@ int main(void)
 		_delay_ms(2000);
 		Display_Fill(DISPLAY_BLACK);
 		Display_SwapBuffers();
-		_delay_ms(2000);
+		_delay_ms(2000);*/
 		
     }
 }
