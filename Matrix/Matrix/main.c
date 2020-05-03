@@ -30,18 +30,43 @@ int main(void)
 	pixel_color_t current_color = DISPLAY_WHITE;
 	while(1)
     {
-		
-		for(uint8_t c = ' '; c <= '~'; c++) {
-			Display_Fill(DISPLAY_BLACK);
-			Display_DrawChar(0, 8, c, 1, DISPLAY_WHITE);
-			Display_DrawString(0, 0, "hi", 1, DISPLAY_WHITE);
-			Display_SwapBuffers();
-			_delay_ms(500);
-		}
+		for(uint8_t r=0; r < 2; r++) {
+			//draw some text!
+			for(uint8_t color_count = 0; color_count < 7; color_count++) {
+				switch(color_count) {
+					case 0:
+					current_color = DISPLAY_RED;
+					break;
+					case 1:
+					current_color = DISPLAY_GREEN;
+					break;
+					case 2:
+					current_color = DISPLAY_BLUE;
+					break;
+					case 3:
+					current_color = DISPLAY_CYAN;
+					break;
+					case 4:
+					current_color = DISPLAY_MAGENTA;
+					break;
+					case 5:
+					current_color = DISPLAY_YELLOW;
+					break;
+					default:
+					current_color = DISPLAY_WHITE;
+					break;
 
-		//draw some rotating lines!
+				}
+				Display_Fill(DISPLAY_BLACK);
+				Display_DrawString(0,0,"Hello", 1, current_color);
+				Display_DrawString(2,8,"World!", 1, current_color);
+				Display_SwapBuffers();
+				_delay_ms(200);
+			}
+		}
 		
-		/*for(uint8_t color_count = 0; color_count < 7; color_count++) {
+		//draw some rotating lines!
+		for(uint8_t color_count = 0; color_count < 7; color_count++) {
 			switch(color_count) {
 			case 0:
 				current_color = DISPLAY_RED;
@@ -68,16 +93,16 @@ int main(void)
 			}
 			for(uint8_t count = 0; count < 15; count++) {
 				Display_Fill(DISPLAY_BLACK);
-				Display_DrawLine(count, 0, 15-count, 15, current_color);
+				Display_DrawLine(count*2, 0, 31-count*2, 15, current_color);
 				Display_SwapBuffers();
-				_delay_ms(75);
+				_delay_ms(50);
 			}
 		
 			for(uint8_t count = 0; count < 15; count++) {
 				Display_Fill(DISPLAY_BLACK);
-				Display_DrawLine(0, 15-count, 15, count, current_color);
+				Display_DrawLine(0, 15-count, 31, count, current_color);
 				Display_SwapBuffers();
-				_delay_ms(75);
+				_delay_ms(50);
 			}
 		} 
 		
@@ -95,8 +120,11 @@ int main(void)
 
 		Display_DrawPixel(8,13,DISPLAY_YELLOW);
 		Display_DrawPixel(9,13,DISPLAY_YELLOW);
+
+		Display_DrawString(17, 3, "Hi!", 1, DISPLAY_WHITE);
+	
 		Display_SwapBuffers();
-		_delay_ms(1000);//*/
+		_delay_ms(2000);//*/
 		
 		
 		//Disabled below because it's hecking bright

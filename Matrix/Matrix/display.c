@@ -13,7 +13,7 @@
 #include <util/delay.h>
 #include <stdbool.h>
 
-#define NUM_DISPLAYS_HORIZ 1
+#define NUM_DISPLAYS_HORIZ 2
 #define DISPLAY_WIDTH 16
 #define DISPLAY_HEIGHT 16
 
@@ -65,8 +65,8 @@ void Display_TransmitBuffer() {
 		for(uint8_t row = 0; row < DISPLAY_HEIGHT/2; row++) {		//for each 8 rows in the segment
 			for(uint8_t col = 0; col < 4; col++) {	//for each column in the 4 columns
 
-				pixel_color_t px1 = frontbuf[seg * 4 + col + DISPLAY_WIDTH*row];		//convert (seg, col, row) to pixel address for the top 8 rows
-				pixel_color_t px2 = frontbuf[seg * 4 + col + DISPLAY_WIDTH*row + NUM_DISPLAYS_HORIZ*DISPLAY_WIDTH*DISPLAY_HEIGHT/2];	//now add 128 to that and you have the pixel in the bottom 8 rows as well
+				pixel_color_t px1 = frontbuf[seg * 4 + col + NUM_DISPLAYS_HORIZ*DISPLAY_WIDTH*row];		//convert (seg, col, row) to pixel address for the top 8 rows
+				pixel_color_t px2 = frontbuf[seg * 4 + col + NUM_DISPLAYS_HORIZ*DISPLAY_WIDTH*row + NUM_DISPLAYS_HORIZ*DISPLAY_WIDTH*DISPLAY_HEIGHT/2];	//now add 128 to that and you have the pixel in the bottom 8 rows as well
 
 				uint8_t r1 = (px1 & 0b11100000) >> 5; //extract rgb for px1
 				uint8_t g1 = (px1 & 0b00011100) >> 2;
@@ -131,14 +131,14 @@ void Display_TransmitBuffer() {
 
 //Fill the screen buffer with a solid colour
 void Display_Fill(pixel_color_t px) {
-	for(uint32_t i = 0; i < DISPLAY_WIDTH * DISPLAY_HEIGHT; i++) {
+	for(uint32_t i = 0; i < NUM_DISPLAYS_HORIZ* DISPLAY_WIDTH * DISPLAY_HEIGHT; i++) {
 		backbuf[i] = px;
 	}
 }
 
 //Fill a pixel at a given address.
 void Display_DrawPixel(uint8_t x, uint8_t y, pixel_color_t px) {
-	backbuf[x + DISPLAY_WIDTH*y] = px;
+	backbuf[x + NUM_DISPLAYS_HORIZ*DISPLAY_WIDTH*y] = px;
 }
 
 //Bresenham's line algorithm adapted from Rosetta Code website
@@ -248,7 +248,7 @@ uint8_t Display_DrawChar(uint8_t x, uint8_t y, uint8_t c, uint8_t scale, pixel_c
 		}
 	}
 	
-	if(x + 5*scale > DISPLAY_WIDTH) { //ensure we aren't going to overflow the display in x
+	if(x + 5*scale > DISPLAY_WIDTH*NUM_DISPLAYS_HORIZ) { //ensure we aren't going to overflow the display in x
 		return 1;
 	}
 	if(y + 8*scale > DISPLAY_HEIGHT) { //ensure we aren't going to overflow the display in y
