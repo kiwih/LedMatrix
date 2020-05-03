@@ -2,7 +2,7 @@
 
 I found an LED matrix in the bin outside a business. So I took it home and got it going!
 
-I used an Atmega Xplained Mini (Atmega328PB) to control the module, and a 12V 2A DC PSU unit to provide power.
+I used an Atmega Xplained Mini (Atmega328PB) to control the module, and a 12V 2A DC PSU unit to provide power (note power requirements below)
 
 ## Investigation
 
@@ -53,12 +53,18 @@ To the Xplained Mini:
 * Xplained Mini USB to my computer
 
 ```
+//CLK and LAT are on PORT C
 #define DDR_MATRIX_CTRL DDRC
 #define PORT_MATRIX_CTRL PORTC
 #define PIN_CLK 0
 #define PIN_LAT	1
-#define PIN_OE	2
 
+//OE is associated with PORT B3 as this goes with PWM for TIMER2 (OC2A pin is same pin as PB3)
+#define DDR_MATRIX_OE DDRB
+#define PORT_MATRIX_OE PORTB
+#define PIN_OE 3
+
+//color pins on PORT D
 #define DDR_MATRIX_COLORS DDRD
 #define PORT_MATRIX_COLORS PORTD
 #define PIN_R1 0
@@ -67,6 +73,7 @@ To the Xplained Mini:
 #define PIN_B2 3
 #define PIN_G1 4
 #define PIN_G2 5
+
 ```
 
 Power supply:
@@ -102,3 +109,10 @@ etc.
 3. (That is, the top and bottom 8 rows are loaded in parallel.)
 
 You may check Display_TransmitBuffer() to see how I did this.
+
+## Power requirements
+After some investigation with a couple of colleagues we determined that one module can draw a whopping 4A of current!
+Obviously this wasn't going to do given I only had a 2A power supply at home (it runs, but the PSU is unhappy).
+To resolve this, I apply a PWM signal to the OE input pin on the module. 
+The module is actually painfully bright (even at 2A with an overwhelmed PSU), so I configure the PWM signal to have the display active just 6.25% of the time.
+You can check this in Timer2_Init() to see my configuration.

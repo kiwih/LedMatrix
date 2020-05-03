@@ -43,7 +43,7 @@ void Display_SwapBuffers() {
 
 void Display_TransmitBuffer() {
 	//1. Turn off the display (so there's no flicker) by writing a 1 to OE
-	DDR_MATRIX_CTRL |= (1 << PIN_OE);
+	//PORT_MATRIX_CTRL |= (1 << PIN_OE);
 
 	//2. Emit the screen buffer, pixel by pixel, into the shift registers.
 	//Note: getting everything out in the right order is a chore
@@ -124,7 +124,7 @@ void Display_TransmitBuffer() {
 	PORT_MATRIX_CTRL &= ~(1 << PIN_LAT);
 
 	//4. Now we re-enable the display 
-	PORT_MATRIX_CTRL &= ~(1 << PIN_OE); //this line is correct
+	//PORT_MATRIX_CTRL &= ~(1 << PIN_OE); //this line is correct
 }
 
 //Fill the screen buffer with a solid colour

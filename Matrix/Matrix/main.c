@@ -9,6 +9,7 @@
 
 #include "display.h"
 #include "timer0.h"
+#include "timer2.h"
 
 #include <avr/io.h>
 #include <util/delay.h>
@@ -22,14 +23,15 @@ int main(void)
 	Display_Init();
 	Display_Fill(DISPLAY_BLACK);
 	Display_SwapBuffers();
-	Timer0_Init();
+	Timer0_Init(); //refreshes the display
+	Timer2_Init(); //pwm the OE
 
 	sei();
 	pixel_color_t current_color = DISPLAY_WHITE;
 	while(1)
     {
 		
-		//draw some rotating lines!
+		/*//draw some rotating lines!
 		for(uint8_t color_count = 0; color_count < 7; color_count++) {
 			switch(color_count) {
 			case 0:
@@ -85,36 +87,38 @@ int main(void)
 		Display_DrawPixel(8,13,DISPLAY_YELLOW);
 		Display_DrawPixel(9,13,DISPLAY_YELLOW);
 		Display_SwapBuffers();
-		_delay_ms(1000);
+		_delay_ms(1000);*/
 		
 		
 		//Disabled below because it's hecking bright
-		/*
+	
+
+		
 		Display_Fill(DISPLAY_RED);
 		Display_SwapBuffers();
-		_delay_ms(250);
+		_delay_ms(2000);
 		Display_Fill(DISPLAY_GREEN);
 		Display_SwapBuffers();
-		_delay_ms(250);
+		_delay_ms(2000);
 		Display_Fill(DISPLAY_BLUE);
 		Display_SwapBuffers();
-		_delay_ms(250);
+		_delay_ms(2000);
 		Display_Fill(DISPLAY_CYAN);
 		Display_SwapBuffers();
-		_delay_ms(250);
+		_delay_ms(2000);
 		Display_Fill(DISPLAY_YELLOW);
 		Display_SwapBuffers();
-		_delay_ms(250);
+		_delay_ms(2000);
 		Display_Fill(DISPLAY_MAGENTA);
 		Display_SwapBuffers();
-		_delay_ms(250);
+		_delay_ms(2000);
 		Display_Fill(DISPLAY_WHITE);
 		Display_SwapBuffers();
-		_delay_ms(250);
+		_delay_ms(2000);
 		Display_Fill(DISPLAY_BLACK);
 		Display_SwapBuffers();
-		_delay_ms(250);
-		*/
+		_delay_ms(2000);
+		
     }
 }
 
