@@ -18,6 +18,6 @@
 	//let's have it running at just 6.25% intensity (16 cyles on, 240 cycles off)
 
 	TCCR2A = 0b10000011; //fast PWM, Clear OC2A on Compare Match, set OC2A at BOTTOM (non-inverting mode)
-	TCCR2B = 0b00000010; //clk/16
+	TCCR2B = 0b00000010; //clk/8
 	OCR2A = 239; //count 240 cycles OE=high (display disabled) and 16 cycles low (display enabled) = 16 on cycles
  }
