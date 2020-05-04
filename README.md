@@ -4,6 +4,8 @@ I found an LED matrix in the bin outside a business. So I took it home and got i
 
 I used an Atmega Xplained Mini (Atmega328PB) to control the module, and a 12V 2A DC PSU unit to provide power (note power requirements below)
 
+Note: This is also published on [my blog](https://01001000.xyz/2020-05-03-Rescuing-a-trashed-LED-Matrix/)!
+
 ## Investigation
 
 First port of call was to examine the PCB for the control scheme. I found an INPUT port, an OUTPUT port (presumably for daisy chaining) and 12V/GND port.
